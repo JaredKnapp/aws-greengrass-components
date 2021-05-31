@@ -1,0 +1,16 @@
+{
+  "name": "opcua-client",
+  "version": "1.0.0",
+  "description": "Greengrass OPC-UA Client Component that will publish all OPC-UA Messages to IoTCore",
+  "author": "WJK",
+  "license": "Apache-2.0",
+  "main": "client.js",
+  "scripts": {
+    "start": "node client.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-greengrassv2": "^3.17.0",
+    "aws-iot-device-sdk-v2": "^1.5.1",
+    "node-opcua": "^2.43.0"
+  }
+}
