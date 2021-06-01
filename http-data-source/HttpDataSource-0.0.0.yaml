@@ -1,0 +1,51 @@
+
+# 
+---
+recipeFormatVersion: 2020-01-25
+componentName: HttpDataSource
+componentVersion: 0.0.0
+componentDescription: "Data Source reading HTTP POST messages, and sending to IoTCore via local MQTT"
+componentPublisher: "WJK"
+# 
+
+# 
+ComponentConfiguration:
+  DefaultConfiguration:
+    mappings:
+      localTopic: "/localTopic"
+    connectionInfo:
+      httpPort: 8080
+      httpRootContext: "/api"
+      brokerUri: "tcp://localhost:1883"
+      clientId: "httpdatasource"
+      username: null
+      password: null
+
+ComponentDependencies:
+  Mosquitto:
+    VersionRequirement: ^0.0.0
+    DependencyType: HARD
+            
+manifests:
+  - platform:
+        os: windows
+    name: "Windows"
+    selections: [ "windows" ]
+    artifacts: [{ unarchive: ZIP, uri: 's3://localhost/HttpDataSource.artifacts.zip' }]
+  - platform:
+        os: darwin
+    name: "MacOS"
+    selections: [ "macos", "posix" ]
+    artifacts: [{ unarchive: ZIP, uri: 's3://localhost/HttpDataSource.artifacts.zip' }]
+  # differentiating versions of linux is currently incomplete
+  - platform:
+        os: all
+    name: "Posix"
+    selections: [ "posix" ]
+    artifacts: [{ unarchive: ZIP, uri: 's3://localhost/HttpDataSource.artifacts.zip' }]
+
+lifecycle:
+    install:
+        posix: ln -f -s -t . {artifacts:decompressedPath}/HttpDataSource.artifacts/*
+    run:
+        posix: java -cp . -jar aws.iotcore.HttpDataSource.jar

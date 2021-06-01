@@ -1,0 +1,39 @@
+---
+RecipeFormatVersion: 2020-01-25
+ComponentName: EdgeProfileService
+ComponentVersion: '1.0.0'
+ComponentDescription: Used to deploy ADLINK Edge Profiles to remote devices.
+ComponentPublisher: WJK
+ComponentDependencies:
+  aws.greengrass.TokenExchangeService:
+    VersionRequirement: '^2.0.0'
+    DependencyType: HARD
+ComponentConfiguration:
+  DefaultConfiguration:
+  
+    commandTopic: "command/fd75f7bb-7299-4ca1-b521-b976e53536b0"
+    responseTopic: 'response/fd75f7bb-7299-4ca1-b521-b976e53536b0'
+    s3Bucket: 'ggv2-component-artifacts-742690735652-us-west-2'
+    outDirectory: '/opt/adlink/edgeprofilebuilder'
+    
+    accessControl:
+      aws.greengrass.ipc.mqttproxy:
+        "EdgeProfileService:pubsub:1":
+          policyDescription: "Provides access to subscribe/publish to any topic."
+          operations:
+            - "aws.greengrass#PublishToIoTCore"
+            - "aws.greengrass#SubscribeToIoTCore"
+          resources:
+            - "*"
+Manifests:
+  - Platform:
+      os: linux
+    Lifecycle:
+      Install: 
+        RequiresPrivilege: true
+        Script: "sudo mkdir -p {configuration:/outDirectory} && sudo chown ggc_user:ggc_user {configuration:/outDirectory} && python3 -m pip install awsiotsdk && pip3 install --user boto3"
+      Run:
+        Script: "python3 -u {artifacts:path}/component.py $AWS_IOT_THING_NAME '{configuration:/commandTopic}' '{configuration:/responseTopic}' '{configuration:/s3Bucket}' '{configuration:/outDirectory}'"
+
+    Artifacts:
+      - URI: "s3://localhost/component.py"

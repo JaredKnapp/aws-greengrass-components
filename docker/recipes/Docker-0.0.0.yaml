@@ -1,0 +1,24 @@
+---
+RecipeFormatVersion: "2020-01-25"
+ComponentName: "Docker"
+ComponentVersion: "0.0.0"
+ComponentType: "aws.greengrass.generic"
+ComponentDescription: "Simple Docker Installation"
+ComponentPublisher: "AWS"
+Manifests:
+  - Platform:
+      os: "linux"
+    Name: "Linux"
+    Lifecycle:
+      Install:
+        RequiresPrivilege: true
+        Timeout: 600
+        script: "sudo apt-get update && sudo apt-get install -y docker.io && sudo usermod -aG docker ggc_user"
+      Startup:
+        RequiresPrivilege: true
+        Timeout: 600
+        script: "sudo systemctl start docker"
+      Shutdown:
+        RequiresPrivilege: true
+        Timeout: 600
+        script: "sudo systemctl stop docker"
